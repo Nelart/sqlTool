@@ -1,0 +1,17 @@
+server:
+  port: 9080
+
+logging:
+  level:
+    root: INFO
+
+spring:
+  flyway:
+    enabled: false
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521/halowin
+    username: test
+    password: test
+  jpa:
+    database: oracle
