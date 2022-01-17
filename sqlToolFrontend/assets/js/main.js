@@ -251,7 +251,7 @@ function explainPlan() {
     let ExecutionPlanTable = document.getElementsByClassName("ExecutionPlanTable")[0]
         .getElementsByTagName('tbody')[0];
 
-    ExecutionPlanTable.innerHTML="                            <tr>\n" +
+    ExecutionPlanTable.innerHTML="<tr>\n" +
         "                               <th>operation</th>\n" +
         "                               <th>object_name</th>\n" +
         "                               <th>options</th>\n" +
@@ -259,6 +259,7 @@ function explainPlan() {
         "                               <th>bytes</th>\n" +
         "                               <th>tempSpace</th>\n" +
         "                               <th>cost</th>\n" +
+        "                               <th>execution time</th>\n" +
         "                            </tr>"
 
     var x = selectedHistorySql;
@@ -308,6 +309,10 @@ function explainPlan() {
 
                 newCell = newRow.insertCell();
                 newText = document.createTextNode(item.cost);
+                newCell.appendChild(newText);
+
+                newCell = newRow.insertCell();
+                newText = document.createTextNode(item.time);
                 newCell.appendChild(newText);
             })
         }

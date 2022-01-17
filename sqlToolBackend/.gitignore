@@ -1,0 +1,37 @@
+# Operating System Files
+
+*.DS_Store
+Thumbs.db
+
+# Build Files #
+
+bin
+target
+build/
+.gradle
+
+# Eclipse Project Files #
+
+.classpath
+.project
+.settings
+
+# IntelliJ IDEA Files #
+
+*/*.iml
+*.ipr
+*.iws
+*.idea
+
+# Test files
+
+*-uploaded
+
+dependency-reduced-pom.xml
+README.html
+/deployment/stage/dev/.terraform/
+/.run/Dockerfile.run.xml
+/.run/CinServiceApplication.run.xml
+/.run/CinService__clean_genJaxb_generateJsonSchema2Pojo_build_.run.xml
+/.run/Tests.run.xml
+/dev-environment.config
