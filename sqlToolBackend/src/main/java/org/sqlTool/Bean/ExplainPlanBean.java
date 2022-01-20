@@ -21,7 +21,7 @@ public class ExplainPlanBean {
     private String options;
     private Long parentId;
     private Long tempSpace;
-    private Long time;
+    private String time;
 
 
 

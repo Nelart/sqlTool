@@ -259,7 +259,7 @@ function explainPlan() {
         "                               <th>bytes</th>\n" +
         "                               <th>tempSpace</th>\n" +
         "                               <th>cost</th>\n" +
-        "                               <th>execution time</th>\n" +
+        "                               <th>time</th>\n" +
         "                            </tr>"
 
     var x = selectedHistorySql;

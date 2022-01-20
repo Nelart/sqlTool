@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 import org.sqlTool.Bean.ExplainPlanBean;
 import org.sqlTool.Bean.QueryBean;
 import org.sqlTool.dal.MySqlToolDalService;
-import org.sqlTool.util.*;
+import org.sqlTool.util.QueryHelper;
+import org.sqlTool.util.SessionHelper;
+import org.sqlTool.util.Timer;
+import org.sqlTool.util.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,7 +116,7 @@ public class MySqlToolDalServiceImpl implements MySqlToolDalService {
                 parentId = rs.wasNull() ? null : parentId;
                 plan.setParentId(parentId);
                 plan.setTempSpace(rs.getLong("temp_space"));
-                plan.setTime(rs.getLong("time"));
+                plan.setTime(getDateFromMillis(rs.getLong("time")));
                 planList.add(plan);
             }
 
@@ -131,7 +134,17 @@ public class MySqlToolDalServiceImpl implements MySqlToolDalService {
         return planList;//ExplainPlanHelper.getPlan(planList);
     }
 
+    public String getDateFromMillis(long seconds) {
+        if(seconds == 0)
+            return "";
 
+        long HH = seconds / 3600;
+        long MM = (seconds % 3600) / 60;
+        long SS = seconds % 60;
+
+        String timeInHHMMSS = String.format("%02d:%02d:%02d", HH, MM, SS);
+        return timeInHHMMSS;
+    }
 
 }
 
