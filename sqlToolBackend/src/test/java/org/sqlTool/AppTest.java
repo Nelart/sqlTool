@@ -1,9 +1,8 @@
 package org.sqlTool;
 
-import static org.junit.Assert.assertTrue;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,9 +33,5 @@ public class AppTest
         Statement sta = con.createStatement();
         log.info("create session");
 
-
-
-
-        assertTrue( true );
     }
 }

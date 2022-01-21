@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public interface MySqlToolDalService {
 
-    public double executeQuery(String query, String queryName, int execNumber, boolean omitFirstExec) throws SQLException;
+    public double executeQuery(String query, int execNumber, boolean omitFirstExec) throws SQLException;
 
 
     public ArrayList<ExplainPlanBean> explainPlanFor(String query) throws Exception;

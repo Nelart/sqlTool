@@ -2,6 +2,7 @@ package org.sqlTool.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.sqlTool.Bean.ExplainPlanBean;
 import org.sqlTool.common.Bo.QueryBo;
 import org.sqlTool.dal.MySqlToolDalService;
@@ -22,7 +23,56 @@ public class MySqlToolBizServiceImpl implements MySqlToolBizService {
 
   @Override
   public QueryBo query(String sqlCommand, String hint) throws SQLException {
-    String queryName = sqlCommand.substring(0, sqlCommand.indexOf(" "));
+
+    String resultSqlCommand = restructureScript(sqlCommand, hint);
+
+    double queryTime = mySqlToolDalService.executeQuery(resultSqlCommand, 10, false);
+    Boolean isSucc = true;
+    Long affectRow = 0L;
+    if (queryTime < 0) {
+      isSucc = false;
+      affectRow = -1L;
+    }
+
+    double query6digit =
+        BigDecimal.valueOf(queryTime).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    log.info("6 digits of the query time :{}", query6digit);
+
+    QueryBo queryBo = new QueryBo();
+    queryBo.setMeasuredTime(query6digit);
+    queryBo.setCommandStatus(isSucc);
+    queryBo.setAffectedRowNum(affectRow);
+    queryBo.setQuery(resultSqlCommand);
+    return queryBo;
+  }
+
+  @Override
+  public ArrayList<ExplainPlanBean> explainPlan(String query) throws Exception {
+    return mySqlToolDalService.explainPlanFor(query);
+  }
+
+  public String restructureScript(String sqlCommand, String hint) {
+    if (!StringUtils.hasLength(hint))
+      return sqlCommand;
+
+    String[] unionSplits = sqlCommand.split("(?i)union");
+    boolean hasUnion = unionSplits.length > 1;
+
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < unionSplits.length; i++) {
+      builder.append(addHintsForOneScript(unionSplits[i].trim(), hint));
+      if (hasUnion && i < unionSplits.length - 1)
+        builder.append(" union ");
+    }
+
+    return builder.toString();
+  }
+
+  private String addHintsForOneScript(String sqlCommand, String hint) {
+
+    int cutSelect = sqlCommand.toLowerCase().indexOf("select") + 6;
+
+    String queryName = sqlCommand.substring(0, cutSelect);
 
     String tableAlias = getTableAlias(sqlCommand);
 
@@ -40,32 +90,10 @@ public class MySqlToolBizServiceImpl implements MySqlToolBizService {
         default:
           hint = "";
       }
-      String queryLast = sqlCommand.substring(sqlCommand.indexOf(' ') + 1);
-      sqlCommand = queryName + hint + queryLast;
+      String queryLast = sqlCommand.substring(cutSelect + 1);
+      return queryName + hint + queryLast;
     }
-    double queryTime = mySqlToolDalService.executeQuery(sqlCommand, queryName, 10, false);
-    Boolean isSucc = true;
-    Long affectRow = 0L;
-    if (queryTime < 0) {
-      isSucc = false;
-      affectRow = -1L;
-    }
-
-    double query6digit =
-        BigDecimal.valueOf(queryTime).setScale(2, RoundingMode.HALF_UP).doubleValue();
-    log.info("6 digits of the query time :{}", query6digit);
-
-    QueryBo queryBo = new QueryBo();
-    queryBo.setMeasuredTime(query6digit);
-    queryBo.setCommandStatus(isSucc);
-    queryBo.setAffectedRowNum(affectRow);
-    queryBo.setQuery(sqlCommand);
-    return queryBo;
-  }
-
-  @Override
-  public ArrayList<ExplainPlanBean> explainPlan(String query) throws Exception {
-    return mySqlToolDalService.explainPlanFor(query);
+    return sqlCommand;
   }
 
   private String getTableAlias(String sqlCommand) {
@@ -80,15 +108,19 @@ public class MySqlToolBizServiceImpl implements MySqlToolBizService {
       whereIndex = sqlCommand.length() - 1;
     }
 
-    // FROM employees u, job_history p, departments a
+    // employees u, job_history p, departments a
+    // employees e INNER JOIN JOB_HISTORY jh on e.employee_id=jh.employee_id , JOBS j
     String tables = sqlCommand.substring(fromIndex + 5, whereIndex);
 
-    String[] splits = tables.trim().split(",");
+    String[] splits = tables.trim().split(",|(?i)join");
     for (int i = 0; i < splits.length; i++) {
-      String[] subs = splits[i].trim().split(" ");
-      if (subs.length >= 1) {
-        result += subs[subs.length - 1];
+      String[] subs = splits[i].trim().split("\\s+");
+      if (subs.length == 1) {
+        result += subs[0];
+      } else if (subs.length > 1) {
+        result += subs[1].equalsIgnoreCase("on")?subs[0]:subs[1];
       }
+
       if (i < splits.length - 1) result += " ";
     }
 

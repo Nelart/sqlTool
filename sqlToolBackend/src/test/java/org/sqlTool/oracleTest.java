@@ -1,11 +1,9 @@
 package org.sqlTool;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -19,7 +17,6 @@ import java.util.Map;
  * @Time: 1:35 a.m.
  * @Description:
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class oracleTest {
 

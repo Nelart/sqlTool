@@ -1,14 +1,10 @@
 package org.sqlTool.dal.impl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.sqlTool.service.impl.MySqlToolBizServiceImpl;
 
 import java.sql.SQLException;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class MySqlToolDalServiceImplTest {
 
@@ -24,7 +20,7 @@ public class MySqlToolDalServiceImplTest {
         String queryName = "select";
         int execNumber = 3;
         boolean omitFirstExec = false;
-        mySqlToolDalService.executeQuery(query, queryName, execNumber, omitFirstExec);
+        mySqlToolDalService.executeQuery(query, execNumber, omitFirstExec);
     }
 
     @Test
@@ -34,7 +30,7 @@ public class MySqlToolDalServiceImplTest {
         String queryName = "update book set isbn=123 where id = 2";
         int execNumber = 3;
         boolean omitFirstExec = false;
-        mySqlToolDalService.executeQuery(query, queryName, execNumber, omitFirstExec);
+        mySqlToolDalService.executeQuery(query, execNumber, omitFirstExec);
     }
 
 

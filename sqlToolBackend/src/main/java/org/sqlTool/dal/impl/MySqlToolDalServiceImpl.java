@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 /**
@@ -39,9 +40,10 @@ public class MySqlToolDalServiceImpl implements MySqlToolDalService {
      * */
 
     @Override
-    public double executeQuery(String query, String queryName, int execNumber, boolean omitFirstExec) throws SQLException {
+    public double executeQuery(String query, int execNumber, boolean omitFirstExec) throws SQLException {
 
-        log.info("executeQuery(name=" + queryName  + ", execNumber=" + execNumber
+        String queryName = UUID.randomUUID().toString();
+        log.info("executeQuery(name=" + queryName + ", execNumber=" + execNumber
                 + ", omitFirstExec=" + omitFirstExec + "):\n" + query);
 
         Statement s = utils.getConnection().createStatement();
